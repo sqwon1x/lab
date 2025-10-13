@@ -58,7 +58,7 @@
             Console.Write("Введіть кількість тарілок супу: ");
             double soup = Convert.ToDouble(Console.ReadLine());
 
-            Console.Write("Введіть кількість піц: ");
+            Console.Write("Введіть кількість піци: ");
             double pizza = Convert.ToDouble(Console.ReadLine());
 
             Console.Write("Введіть кількість бургерів: ");

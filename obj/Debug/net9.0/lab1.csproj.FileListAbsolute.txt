@@ -12,3 +12,4 @@ C:\Users\nasty\OneDrive\Документи\lab1\obj\Debug\net9.0\refint\lab1.dll
 C:\Users\nasty\OneDrive\Документи\lab1\obj\Debug\net9.0\lab1.pdb
 C:\Users\nasty\OneDrive\Документи\lab1\obj\Debug\net9.0\lab1.genruntimeconfig.cache
 C:\Users\nasty\OneDrive\Документи\lab1\obj\Debug\net9.0\ref\lab1.dll
+C:\Users\nasty\OneDrive\Документи\lab1\obj\Debug\net9.0\lab1.sourcelink.json

@@ -1,180 +1,324 @@
-﻿namespace lab2_KN23
+﻿using System;
+using product_lab3;
+
+namespace Lab3
 {
+    struct Product
+    {
+        public string Name;
+        public double Price;
+
+        public Product(string name, double price)
+        {
+            Name = name;
+            Price = price;
+        }
+    }
+
     class Program
     {
+        static Product[] products = new Product[5];
+        static int count = 0;
+
         static void Main(string[] args)
         {
-            RenderIntro();
-            ShowMainMenu();
+            LoginMenu();
+
+            int choice;
+            do
+            {
+                Console.WriteLine("\n=== Всі товари === ");
+                Console.WriteLine("1. Додати продукт");
+                Console.WriteLine("2. Пошук продукту");
+                Console.WriteLine("3. Перегляд всіх продуктів");
+                Console.WriteLine("4. Статистика");
+                Console.WriteLine("5. Оформити замовлення");
+                Console.WriteLine("6. Вихід");
+                Console.Write("Ваш вибір: ");
+
+                if (!int.TryParse(Console.ReadLine(), out choice))
+                {
+                    Console.WriteLine("Помилка! Введіть число.");
+                    continue;
+                }
+
+                switch (choice)
+                {
+                    case 1:
+                        AddProduct();
+                        break;
+
+                    case 2:
+                        FindProduct();
+                        break;
+
+                    case 3:
+                        PrintAllProducts();
+                        break;
+
+                    case 4:
+                        ShowStats();
+                        break;
+
+                    case 5:
+                        PlaceOrder();
+                        break;
+                    
+                    case 6:
+                        Console.WriteLine("Вихід...");
+                        break;
+
+                    default:
+                        Console.WriteLine("Невірний пункт меню.");
+                        break;
+                }
+
+            } while (choice != 6);
         }
 
-        // Інтро
-        public static void RenderIntro()
+        // Login
+        static void LoginMenu()
         {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("===========================================");
-            Console.WriteLine("========== Ласкаво просимо до Cafe Bar =====");
-            Console.WriteLine("===========================================");
+            const string correctLogin = "admin";
+            const string correctPass = "1234";
+
+            int attempts = 3;
+
+            while (attempts > 0)
+            {
+                Console.Write("Логін: ");
+                string login = Console.ReadLine();
+
+                Console.Write("Пароль: ");
+                string pass = Console.ReadLine();
+
+                if (login == correctLogin && pass == correctPass)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Успішний вхід!\n");
+                    Console.ResetColor();
+                    return;
+                }
+                else
+                {
+                    attempts--;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Невірний логін або пароль. Залишилось спроб: {attempts}");
+                    Console.ResetColor();
+                }
+            }
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nСпроби Вичерпано! Програма завершує роботу.");
             Console.ResetColor();
+            Environment.Exit(0);
+        }
+        
+        // Додати продукт
+        static void AddProduct()
+        {
+            while (true)
+            {
+                if (count >= products.Length)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\nМаксимальна кількість продуктів!");
+                    Console.ResetColor();
+                    return;
+                }
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write("Введіть назву продукту: ");
+                Console.ResetColor();
+                string? input = Console.ReadLine();
+                if (string.IsNullOrEmpty(input))
+                {
+                    Console.WriteLine("Помилка: поле не може бути порожнім.");
+                    return;
+                }
+                string name = input!;
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write("Введіть ціну: ");
+                Console.ResetColor();
+                if (!double.TryParse(Console.ReadLine(), out double price))
+                {
+                    Console.WriteLine("Помилка: ціна має бути числом.");
+                    return;
+                }
+
+                products[count] = new Product(name, price);
+                count++;
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Продукт додано!");
+                Console.ResetColor();
+
+                // Запит: додати ще?
+                Console.WriteLine("\nДодати ще один продукт?");
+                Console.WriteLine("1 — Так, 2 - Ні");
+                Console.Write("Ваш вибір: ");
+
+                string choice = Console.ReadLine();
+
+                if (choice != "1")
+                {
+                    Console.WriteLine("Повернення в меню...");
+                    break;
+                }
+            }
         }
 
-        // Гет ввід користувача
-        public static double GetUserInput(string prompt = "Введіть число:")
+        // Знайти продукт
+        static void FindProduct()
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(prompt + " ");
-
-            bool isNumber = Double.TryParse(Console.ReadLine(), out double choice);
-
-            if (!isNumber)
+            if (count == 0)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("❌ Ви ввели не число!");
+                Console.WriteLine("\nСписок порожній! Спочатку додайте продукти.");
                 Console.ResetColor();
-                return GetUserInput(prompt);
-            }
-
-            Console.ResetColor();
-            return choice;
-        }
-
-        // Головне меню
-        public static void ShowMainMenu()
-        {
-            Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("========== ГОЛОВНЕ МЕНЮ ==========");
-            Console.WriteLine("1. Напої");
-            Console.WriteLine("2. Страви");
-            Console.WriteLine("3. Оформити замовлення");
-            Console.WriteLine("4. Пошук");
-            Console.WriteLine("5. Статистика");
-            Console.WriteLine("6. Вихід");
-            Console.WriteLine("==================================");
-            Console.ResetColor();
-
-            double choice = GetUserInput("Вибреіть пункт меню:");
-
-            switch (choice)
+                return;
+            }    
+            
+            Console.Write("Введіть назву для пошуку: ");
+            string? input = Console.ReadLine();
+            if (string.IsNullOrEmpty(input))
             {
-                case 1: ShowDrinkMenu(); break;
-                case 2: ShowFoodMenu(); break;
-                case 3: MakeOrder(); break;
-                case 4:
-                    Console.WriteLine("Функція в розробці...");
-                    ReturnToMenu();
-                    break;
-                case 5:
-                    Console.WriteLine("Функція в розробці...");
-                    ReturnToMenu();
-                    break;
-                case 6:
-                    Console.WriteLine("До зустрічі!");
-                    Environment.Exit(0);
-                    break;
-                default:
-                    Console.WriteLine("❌ Неправильний вибір. Спробуйте ще раз.");
-                    ShowMainMenu();
-                    break;
+                Console.WriteLine("Помилка: поле не може бути порожнім.");
+                return;
+            }
+            string name = input!;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (products[i].Name.ToLower() == name.ToLower())
+                {
+                    Console.WriteLine($"Знайдено: {products[i].Name} — {products[i].Price} грн");
+                    return;
+                }
+            }
+
+            Console.WriteLine("\nПродукт не знайдено!");
+        }
+
+        // Список продуктів
+        static void PrintAllProducts()
+        {
+            if (count == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nСписок порожній!");
+                Console.ResetColor();
+                return;
+            }
+
+            Console.WriteLine("\n=== Список продуктів ===");
+            for (int i = 0; i < count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {products[i].Name} — {products[i].Price} грн");
             }
         }
 
-        // Меню напоїв
-        public static void ShowDrinkMenu()
+        // Статистика
+        static void ShowStats()
         {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("======= МЕНЮ НАПОЇВ =======");
-            Console.WriteLine("Кава – 25 грн");
-            Console.WriteLine("Чай – 20 грн");
-            Console.WriteLine("Сік – 35 грн");
-            Console.WriteLine("Пиво – 30 грн");
-            Console.ResetColor();
+            if (count == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nНемає даних для статистики!");
+                Console.ResetColor();
+                return;
+            }
 
-            ReturnToMenu();
-        }
+            double min = products[0].Price;
+            double max = products[0].Price;
+            double sum = 0;
+            int expensiveCount = 0;
 
-        // Меню страв
-        public static void ShowFoodMenu()
-        {
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("======= МЕНЮ СТРАВ =======");
-            Console.WriteLine("Сендвіч – 40 грн");
-            Console.WriteLine("Кекс – 50 грн");
-            Console.WriteLine("Салат – 50 грн");
-            Console.WriteLine("Суп – 50 грн");
-            Console.WriteLine("Піца – 150 грн");
-            Console.WriteLine("Бургер – 80 грн");
-            Console.ResetColor();
+            for (int i = 0; i < count; i++)
+            {
+                double price = products[i].Price;
 
-            ReturnToMenu();
+                if (price < min) min = price;
+                if (price > max) max = price;
+
+                if (price > 100) expensiveCount++;
+
+                sum += price;
+            }
+
+            double avg = sum / count;
+
+            Console.WriteLine("\n=== Статистика ===");
+            Console.WriteLine($"Загальна сума: {sum} грн");
+            Console.WriteLine($"Мінімальна ціна: {min} грн");
+            Console.WriteLine($"Максимальна ціна: {max} грн");
+            Console.WriteLine($"Середня ціна: {avg:F2} грн");
+            Console.WriteLine($"Кількість продуктів дорожчих за 100 грн: {expensiveCount}");
         }
 
         // Оформлення замовлення
-        public static void MakeOrder()
+        static void PlaceOrder()
         {
-            // Ціни
-            double priceCoffee = 25;
-            double priceTea = 20;
-            double priceJuice = 35;
-            double priceBeer = 30;
+            if (count == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nСписок продуктів порожній! Спочатку додайте продукти.");
+                Console.ResetColor();
+                return;
+            }
+            
+            Console.WriteLine("\n=== Оформлення замовлення ===");
+            double total = 0;
 
-            double priceSandwich = 40;
-            double priceCupcake = 50;
-            double priceSalad = 50;
-            double priceSoup = 50;
-            double pricePizza = 150;
-            double priceBurger = 80;
+            while (true)
+            {
+                // Показ списку продуктів 
+                Console.WriteLine("\nДоступні товари: ");
+                for (int i = 0; i < count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {products[i].Name} - {products[i].Price} грн");
+                } 
+                
+                Console.Write("Введіть номер продукту для замовлення: ");
+                if (!int.TryParse(Console.ReadLine(), out int choice) || choice < 0 || choice > count)
+                {
+                    Console.WriteLine("Невірний вибір. Спробуйте ще.");
+                    continue;
+                }
+                
+                if (choice == 0)
+                    break;
 
-            Console.WriteLine("=== Введіть кількість товарів ===");
+                Product selected = products[choice - 1];
+                
+                Console.Write($"Введіть кількість для {selected.Name}: ");
+                if (!int.TryParse(Console.ReadLine(), out int quantity) || quantity <= 0)
+                {
+                    Console.WriteLine("Невірна кількість. Спробуйте ще.");
+                    continue;
+                }
 
-            // Напої
-            double coffee = GetUserInput("Кава (чашок):");
-            double tea = GetUserInput("Чай (чашок):");
-            double juice = GetUserInput("Сік (склянок):");
-            double beer = GetUserInput("Пиво (пляшок):");
+                double price = selected.Price * quantity;
+                total += price;
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Додано {quantity} x {selected.Name} - {price} грн до замовлення.");
+                Console.ResetColor();
+                
+                Console.WriteLine("\nБажаєте додати ще продукт до замовлення? (1 - Так, 2 - Ні)");
+                string? more = Console.ReadLine();
+                if (string.IsNullOrEmpty(more) || more != "1")
+                    break;
+            }
 
-            // Страви
-            double sandwich = GetUserInput("Сендвічі (шт):");
-            double cupcake = GetUserInput("Кекси (шт):");
-            double salad = GetUserInput("Салати (тарілок):");
-            double soup = GetUserInput("Супи (тарілок):");
-            double pizza = GetUserInput("Піци (шт):");
-            double burger = GetUserInput("Бургери (шт):");
-
-            // Підрахунок вартості
-            double totalPrice =
-                coffee * priceCoffee +
-                tea * priceTea +
-                juice * priceJuice +
-                beer * priceBeer +
-                sandwich * priceSandwich +
-                cupcake * priceCupcake +
-                salad * priceSalad +
-                soup * priceSoup +
-                pizza * pricePizza +
-                burger * priceBurger;
-
-            // Рандомна знижка
             double randomDiscount = Math.Round(new Random().NextDouble() * 10);
-            double discountTotal = Math.Round(totalPrice * (randomDiscount / 100));
-
-            // Вивід підсумку
+            double discountTotal = Math.Round(total * (randomDiscount / 100));
+            
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("\n=== ПІДСУМОК ЗАМОВЛЕННЯ ===");
-            Console.WriteLine($"Загальна вартість: {totalPrice} грн");
-            Console.WriteLine($"Знижка: {randomDiscount}%");
-            Console.WriteLine($"До оплати: {totalPrice - discountTotal} грн");
+            Console.WriteLine($"\nЗагальна сума замовлення: {total} грн");
+            Console.WriteLine($"Ваша знижка: {randomDiscount}%");
+            Console.WriteLine($"Сума до оплати зі знижкою: {total - discountTotal} грн");
             Console.ResetColor();
-
-            ReturnToMenu();
-        }
-
-        // Повернення в меню
-        public static void ReturnToMenu()
-        {
-            Console.WriteLine("\nНатисніть будь-яку клавішу, щоб повернутися в меню...");
-            Console.ReadKey();
-            ShowMainMenu();
         }
     }
 }

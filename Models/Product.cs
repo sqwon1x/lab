@@ -1,24 +1,22 @@
-namespace product_lab3;
+namespace product_lab4;
 
 public struct Product
 {
     public int Id;
-    public int Price;
-    public string Name = "";
+    public string Name;
+    public double Price;
     public string Description;
-    public int Quantity;
 
-    public Product(int id, string name, int price, string description, int quantity)
+    public Product(int id, string name, double price, string description = "")
     {
         Id = id;
         Name = name;
         Price = price;
         Description = description;
-        Quantity = quantity;
     }
 
-    public bool IsEmpty()
+    public void PrintRow()
     {
-        return String.IsNullOrWhiteSpace(Name);
+        Console.WriteLine($"{Id,-5} | {Name,-20} | {Price,8:F2} грн | {Description,-20}");
     }
 }

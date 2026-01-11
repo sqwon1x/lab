@@ -1,10 +1,10 @@
-﻿namespace lab1
-{
-    using System.Security.Cryptography;
-    using System.Text;
-    using product_lab5;
+﻿using System.Security.Cryptography;
+using System.Text;
+using product_lab5;
 
-    internal class Program
+namespace lab1
+{
+    internal static class Program
     {
         private static string _dataDir = "data";
         private static string _productsFile = "data/products.csv";

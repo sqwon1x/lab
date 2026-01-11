@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nasty\\Documents\\school\\opam\\lab\\lab1.csproj": {}
+    "C:\\Users\\nasty\\OneDrive\\Документи\\school\\opam\\lab\\lab1.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nasty\\Documents\\school\\opam\\lab\\lab1.csproj": {
+    "C:\\Users\\nasty\\OneDrive\\Документи\\school\\opam\\lab\\lab1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nasty\\Documents\\school\\opam\\lab\\lab1.csproj",
+        "projectUniqueName": "C:\\Users\\nasty\\OneDrive\\Документи\\school\\opam\\lab\\lab1.csproj",
         "projectName": "lab1",
-        "projectPath": "C:\\Users\\nasty\\Documents\\school\\opam\\lab\\lab1.csproj",
+        "projectPath": "C:\\Users\\nasty\\OneDrive\\Документи\\school\\opam\\lab\\lab1.csproj",
         "packagesPath": "C:\\Users\\nasty\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nasty\\Documents\\school\\opam\\lab\\obj\\",
+        "outputPath": "C:\\Users\\nasty\\OneDrive\\Документи\\school\\opam\\lab\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\nasty\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -19,6 +19,9 @@
         "originalTargetFrameworks": [
           "net10.0"
         ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
         "frameworks": {
           "net10.0": {
             "targetAlias": "net10.0",
@@ -56,7 +59,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",

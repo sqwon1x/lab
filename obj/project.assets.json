@@ -1,11 +1,43 @@
 {
   "version": 3,
   "targets": {
-    "net10.0": {}
+    "net10.0": {
+      "StyleCop.Analyzers/1.1.118": {
+        "type": "package"
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "StyleCop.Analyzers/1.1.118": {
+      "sha512": "Onx6ovGSqXSK07n/0eM3ZusiNdB6cIlJdabQhWGgJp3Vooy9AaLS/tigeybOJAobqbtggTamoWndz72JscZBvw==",
+      "type": "package",
+      "path": "stylecop.analyzers/1.1.118",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "THIRD-PARTY-NOTICES.txt",
+        "analyzers/dotnet/cs/StyleCop.Analyzers.CodeFixes.dll",
+        "analyzers/dotnet/cs/StyleCop.Analyzers.dll",
+        "analyzers/dotnet/cs/de-DE/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/en-GB/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/es-MX/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/fr-FR/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/pl-PL/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/pt-BR/StyleCop.Analyzers.resources.dll",
+        "analyzers/dotnet/cs/ru-RU/StyleCop.Analyzers.resources.dll",
+        "stylecop.analyzers.1.1.118.nupkg.sha512",
+        "stylecop.analyzers.nuspec",
+        "tools/install.ps1",
+        "tools/uninstall.ps1"
+      ]
+    }
+  },
   "projectFileDependencyGroups": {
-    "net10.0": []
+    "net10.0": [
+      "StyleCop.Analyzers >= 1.1.118"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\nasty\\.nuget\\packages\\": {}
@@ -13,11 +45,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\nasty\\Documents\\school\\opam\\lab\\lab1.csproj",
-      "projectName": "lab1",
-      "projectPath": "C:\\Users\\nasty\\Documents\\school\\opam\\lab\\lab1.csproj",
+      "projectUniqueName": "C:\\Users\\nasty\\OneDrive\\Документи\\school\\opam\\lab\\lab.csproj",
+      "projectName": "lab",
+      "projectPath": "C:\\Users\\nasty\\OneDrive\\Документи\\school\\opam\\lab\\lab.csproj",
       "packagesPath": "C:\\Users\\nasty\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\nasty\\Documents\\school\\opam\\lab\\obj\\",
+      "outputPath": "C:\\Users\\nasty\\OneDrive\\Документи\\school\\opam\\lab\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\nasty\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -25,6 +57,9 @@
       "originalTargetFrameworks": [
         "net10.0"
       ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {}
+      },
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
@@ -46,6 +81,14 @@
     "frameworks": {
       "net10.0": {
         "targetAlias": "net10.0",
+        "dependencies": {
+          "StyleCop.Analyzers": {
+            "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+            "suppressParent": "All",
+            "target": "Package",
+            "version": "[1.1.118, )"
+          }
+        },
         "imports": [
           "net461",
           "net462",
@@ -62,7 +105,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

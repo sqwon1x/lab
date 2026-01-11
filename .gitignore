@@ -1,0 +1,6 @@
+﻿lab.sln
+lab.csproj
+obj/
+bin/
+.vs/
+.idea/

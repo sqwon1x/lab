@@ -1,64 +1,72 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Security.Cryptography;
-using product_lab5;
-
-namespace lab5
+﻿namespace lab1
 {
-    class Program
+    using System.Security.Cryptography;
+    using System.Text;
+    using product_lab5;
+
+    internal class Program
     {
-        static string dataDir = "data";
-        static string productsFile = "data/products.csv";
-        static string usersFile = "data/users.csv";
-        
-        static void Main(string[] args)
+        private static string _dataDir = "data";
+        private static string _productsFile = "data/products.csv";
+        private static string _usersFile = "data/users.csv";
+
+        private static void Main()
         {
-            Directory.CreateDirectory(dataDir);
+            Directory.CreateDirectory(_dataDir);
 
-            if (!File.Exists(productsFile))
-                File.WriteAllText(productsFile, "Id;Name;Price;Description\n");
+            if (!File.Exists(_productsFile))
+            {
+                File.WriteAllText(_productsFile, "Id;Name;Price;Description\n");
+            }
 
-            if (!File.Exists(usersFile))
-                File.WriteAllText(usersFile, "Id;Email;Salt;Hash\n");
+            if (!File.Exists(_usersFile))
+            {
+                File.WriteAllText(_usersFile, "Id;Email;Salt;Hash\n");
+            }
 
             LoginMenu();
             MainMenu();
         }
 
         // CSV
-        static List<Product> LoadProducts()
+        private static List<Product> LoadProducts()
         {
             var list = new List<Product>();
-            foreach (var line in File.ReadAllLines(productsFile).Skip(1))
+            foreach (var line in File.ReadAllLines(_productsFile).Skip(1))
+            {
                 if (Product.TryFromCsv(line, out Product p))
+                {
                     list.Add(p);
+                }
+            }
+
             return list;
         }
 
-        static void RewriteProducts(List<Product> products)
+        private static void RewriteProducts(List<Product> products)
         {
             var lines = new List<string> { "Id;Name;Price;Description" };
             lines.AddRange(products.Select(p => p.ToCsv()));
-            File.WriteAllLines(productsFile, lines);
+            File.WriteAllLines(_productsFile, lines);
         }
 
-        static int GenerateNextProductId()
+        private static int GenerateNextProductId()
         {
             int max = 0;
-            foreach (var l in File.ReadAllLines(productsFile).Skip(1))
+            foreach (var l in File.ReadAllLines(_productsFile).Skip(1))
             {
                 var p = l.Split(';');
-                if (int.TryParse(p[0], out int id) && id > max)
+                if (int.TryParse(p[0], out var id) && id > max)
+                {
                     max = id;
+                }
             }
+
             return max + 1;
         }
 
         // Головне меню
-        static void MainMenu()
+        private static void MainMenu()
         {
             int choice;
             do
@@ -94,12 +102,12 @@ namespace lab5
                         PrintError("Невірний пункт меню.");
                         break;
                 }
-
-            } while (choice != 3);
+            }
+            while (choice != 3);
         }
 
         // Меню продуктів
-        static void ProductMenu()
+        private static void ProductMenu()
         {
             int choice;
 
@@ -138,15 +146,15 @@ namespace lab5
                     case 7: return;
                     default: PrintError("Невірний пункт меню."); break;
                 }
-
-            } while (choice != 7);
+            }
+            while (choice != 7);
         }
 
         // Додавання
-        static void AddProduct()
+        private static void AddProduct()
         {
             Console.Write("Назва: ");
-            string name = Console.ReadLine();
+            string name = Console.ReadLine() ?? string.Empty;
 
             Console.Write("Ціна: ");
             if (!double.TryParse(Console.ReadLine(), out double price))
@@ -156,17 +164,17 @@ namespace lab5
             }
 
             Console.Write("Опис: ");
-            string desc = Console.ReadLine();
+            string desc = Console.ReadLine() ?? string.Empty;
 
             int id = GenerateNextProductId();
             var p = new Product(id, name, price, desc);
 
-            File.AppendAllText(productsFile, p.ToCsv() + "\n");
+            File.AppendAllText(_productsFile, p.ToCsv() + "\n");
             PrintSuccess("Продукт додано");
         }
-        
+
         // Список
-        static void PrintAllProducts()
+        private static void PrintAllProducts()
         {
             var products = LoadProducts();
             if (products.Count == 0)
@@ -177,60 +185,68 @@ namespace lab5
 
             Console.WriteLine("\nID | Назва | Ціна | Опис");
             foreach (var p in products)
+            {
                 p.PrintRow();
+            }
         }
 
         // Пошук
-        static void FindProduct()
+        private static void FindProduct()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("Введіть назву: ");
             Console.ResetColor();
-            string q = Console.ReadLine().ToLower();
+            string q = (Console.ReadLine() ?? string.Empty).ToLower();
 
             var products = LoadProducts();
             foreach (var p in products)
+            {
                 if (p.Name.ToLower().Contains(q))
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Знайдено:");
                     Console.ResetColor();
-                    
+
                     p.PrintRow();
                     return;
                 }
+            }
 
             PrintError("Нічого не знайдено");
         }
 
         // Видалення
-        static void DeleteProduct()
+        private static void DeleteProduct()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("Введіть ID для видалення: ");
             Console.ResetColor();
 
-            if (!int.TryParse(Console.ReadLine(), out int id)) return;
-           
+            if (!int.TryParse(Console.ReadLine(), out int id))
+            {
+                return;
+            }
+
             var products = LoadProducts();
             int before = products.Count;
-            
+
             products = products.Where(p => p.Id != id).ToList();
-            
+
             if (before == products.Count)
             {
                 PrintError("Товар не знайдено.");
                 return;
             }
-            
+
             RewriteProducts(products);
             PrintSuccess("Видалено");
         }
 
         // Сортування
-        static void SortingMenu()
+        private static void SortingMenu()
         {
             var products = LoadProducts();
+
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("\n=== СОРТУВАННЯ ===");
             Console.ResetColor();
@@ -243,7 +259,10 @@ namespace lab5
             Console.Write("Ваш вибір: ");
             Console.ResetColor();
 
-            if (!int.TryParse(Console.ReadLine(), out int ch)) return;
+            if (!int.TryParse(Console.ReadLine(), out int ch))
+            {
+                return;
+            }
 
             switch (ch)
             {
@@ -253,12 +272,14 @@ namespace lab5
                     break;
 
                 case 2:
-                    products.Sort((a, b) => a.Name.CompareTo(b.Name));
+                    products.Sort((a, b) =>
+                        string.Compare(a.Name, b.Name, StringComparison.Ordinal));
                     PrintSuccess("Відсортовано!");
                     break;
 
                 case 3:
-                    BubbleSort();
+                    BubbleSort(products);
+                    RewriteProducts(products);
                     PrintSuccess("Бульбашкове сортування завершено!");
                     break;
 
@@ -269,9 +290,8 @@ namespace lab5
         }
 
         // Бульбашкове сортування
-        static void BubbleSort()
+        private static void BubbleSort(List<Product> products)
         {
-            var products = LoadProducts();
             for (int i = 0; i < products.Count - 1; i++)
             {
                 for (int j = 0; j < products.Count - i - 1; j++)
@@ -285,7 +305,7 @@ namespace lab5
         }
 
         // Статистика
-        static void ShowStats()
+        private static void ShowStats()
         {
             var products = LoadProducts();
             if (products.Count == 0)
@@ -300,8 +320,16 @@ namespace lab5
 
             foreach (var p in products)
             {
-                if (p.Price < min) min = p.Price;
-                if (p.Price > max) max = p.Price;
+                if (p.Price < min)
+                {
+                    min = p.Price;
+                }
+
+                if (p.Price > max)
+                {
+                    max = p.Price;
+                }
+
                 sum += p.Price;
             }
 
@@ -319,52 +347,57 @@ namespace lab5
         }
 
         // Авторизація
-        static void LoginMenu()
+        private static void LoginMenu()
         {
             while (true)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("\n=== АВТОРИЗАЦІЯ ===");
                 Console.ResetColor();
-                
+
                 Console.WriteLine("1. Вхід");
                 Console.WriteLine("2. Реєстрація");
                 Console.WriteLine("3. Вихід");
-                
+
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("Ваш вибір: ");
                 Console.ResetColor();
-                
-                string ch = Console.ReadLine();
+
+                string ch = Console.ReadLine() ?? string.Empty;
 
                 if (ch == "3")
+                {
+                    Console.WriteLine("До зустрічі!");
                     Environment.Exit(0);
-                
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write("Email: ");
-                Console.ResetColor();
-                string email = Console.ReadLine();
-
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write("Пароль: ");
-                Console.ResetColor();
-                string pass = Console.ReadLine();
-
-                if (ch == "1")
-                {
-                    if (Login(email, pass))
-                    {
-                        PrintSuccess("Успішний вхід!");
-                        return;
-                    }
-                    else
-                    {
-                        PrintError("Невірний email або пароль!");
-                    }
                 }
-                else if (ch == "2")
+                else if (ch == "1" || ch == "2")
                 {
-                    Register(email, pass);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("Email: ");
+                    Console.ResetColor();
+                    string email = Console.ReadLine() ?? string.Empty;
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("Пароль: ");
+                    Console.ResetColor();
+                    string pass = Console.ReadLine() ?? string.Empty;
+
+                    if (ch == "1")
+                    {
+                        if (Login(email, pass))
+                        {
+                            PrintSuccess("Успішний вхід!");
+                            return;
+                        }
+                        else
+                        {
+                            PrintError("Невірний email або пароль!");
+                        }
+                    }
+                    else if (ch == "2")
+                    {
+                        Register(email, pass);
+                    }
                 }
                 else
                 {
@@ -373,44 +406,50 @@ namespace lab5
             }
         }
 
-        static void Register(string email, string password)
+        private static void Register(string email, string password)
         {
-            var lines = File.ReadAllLines(usersFile);
+            var lines = File.ReadAllLines(_usersFile);
             if (lines.Any(l => l.Split(';').Length > 1 && l.Split(';')[1] == email))
             {
                 PrintError("Email вже існує!");
                 return;
             }
-            
+
             int id = lines.Length;
             string salt = Guid.NewGuid().ToString();
             string hash = Hash(password + salt);
 
-            File.AppendAllText(usersFile, $"{id};{email};{salt};{hash}\n");
+            File.AppendAllText(_usersFile, $"{id};{email};{salt};{hash}\n");
             PrintSuccess("Зареєстровано!");
         }
-        
 
-        static bool Login(string email, string password)
+        private static bool Login(string email, string password)
         {
-            foreach (var l in File.ReadAllLines(usersFile).Skip(1))
+            foreach (var l in File.ReadAllLines(_usersFile).Skip(1))
             {
                 var p = l.Split(';');
-                if (p.Length != 4) continue;
+                if (p.Length != 4)
+                {
+                    continue;
+                }
+
                 if (p[1] == email)
+                {
                     return Hash(password + p[2]) == p[3];
+                }
             }
+
             return false;
         }
 
-        static string Hash(string input)
+        private static string Hash(string input)
         {
             using var sha = SHA256.Create();
             return Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(input)));
         }
-        
+
         // Замовлення
-        static void PlaceOrder()
+        private static void PlaceOrder()
         {
             var products = LoadProducts();
             if (products.Count == 0)
@@ -428,7 +467,10 @@ namespace lab5
                 Console.Write("ID товару (0 - вихід): ");
                 Console.ResetColor();
 
-                if (!int.TryParse(Console.ReadLine(), out int id) || id == 0) break;
+                if (!int.TryParse(Console.ReadLine(), out int id) || id == 0)
+                {
+                    break;
+                }
 
                 var p = products.FirstOrDefault(x => x.Id == id);
                 if (p == null)
@@ -455,7 +497,7 @@ namespace lab5
             }
 
             double discount = new Random().Next(0, 11);
-            double final = total - total * (discount / 100);
+            double final = total - (total * (discount / 100));
 
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("\n=== ЧЕК ===");
@@ -467,14 +509,14 @@ namespace lab5
         }
 
         // Друк помилок/успіху
-        static void PrintError(string msg)
+        private static void PrintError(string msg)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(msg);
             Console.ResetColor();
         }
 
-        static void PrintSuccess(string msg)
+        private static void PrintSuccess(string msg)
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(msg);

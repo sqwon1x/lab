@@ -1,8 +1,7 @@
+using System.Globalization;
+
 namespace product_lab5
 {
-    using System;
-    using System.Globalization;
-
     public class Product
     {
         public int Id { get; set; }

@@ -2,7 +2,7 @@
 using System.Text;
 using product_lab5;
 
-namespace lab1
+namespace lab
 {
     internal static class Program
     {
@@ -12,6 +12,9 @@ namespace lab1
 
         private static void Main()
         {
+            Console.OutputEncoding = Encoding.UTF8;
+            Console.InputEncoding = Encoding.UTF8;
+
             Directory.CreateDirectory(_dataDir);
 
             if (!File.Exists(_productsFile))
@@ -153,11 +156,20 @@ namespace lab1
         // Додавання
         private static void AddProduct()
         {
-            Console.Write("Назва: ");
-            string name = Console.ReadLine() ?? string.Empty;
+            string name;
+            do
+            {
+                Console.Write("Назва: ");
+                name = Console.ReadLine() ?? string.Empty;
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    PrintError("Назва не може бути порожньою!");
+                }
+            }
+            while (string.IsNullOrWhiteSpace(name));
 
             Console.Write("Ціна: ");
-            if (!double.TryParse(Console.ReadLine(), out double price))
+            if (!double.TryParse(Console.ReadLine(), out double price) || price <= 0)
             {
                 PrintError("Некоректна ціна");
                 return;
@@ -268,12 +280,14 @@ namespace lab1
             {
                 case 1:
                     products.Sort((a, b) => a.Price.CompareTo(b.Price));
+                    RewriteProducts(products);
                     PrintSuccess("Відсортовано!");
                     break;
 
                 case 2:
                     products.Sort((a, b) =>
                         string.Compare(a.Name, b.Name, StringComparison.Ordinal));
+                    RewriteProducts(products);
                     PrintSuccess("Відсортовано!");
                     break;
 
@@ -406,12 +420,19 @@ namespace lab1
             }
         }
 
+        // Реєстрація
         private static void Register(string email, string password)
         {
+            if (!email.Contains("@") || !email.Contains("."))
+            {
+                PrintError("Email має містити @ та . !");
+                return;
+            }
+
             var lines = File.ReadAllLines(_usersFile);
             if (lines.Any(l => l.Split(';').Length > 1 && l.Split(';')[1] == email))
             {
-                PrintError("Email вже існує!");
+                PrintError("Такий email вже існує!");
                 return;
             }
 
@@ -423,6 +444,7 @@ namespace lab1
             PrintSuccess("Зареєстровано!");
         }
 
+        // Вхід
         private static bool Login(string email, string password)
         {
             foreach (var l in File.ReadAllLines(_usersFile).Skip(1))
@@ -451,18 +473,20 @@ namespace lab1
         // Замовлення
         private static void PlaceOrder()
         {
-            var products = LoadProducts();
-            if (products.Count == 0)
-            {
-                PrintError("Немає товарів!");
-                return;
-            }
-
             double total = 0;
 
             while (true)
             {
+                var products = LoadProducts();
+
+                if (products.Count == 0)
+                {
+                    PrintError("Немає товарів!");
+                    return;
+                }
+
                 PrintAllProducts();
+
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("ID товару (0 - вихід): ");
                 Console.ResetColor();

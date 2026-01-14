@@ -17,15 +17,8 @@ namespace lab
 
             Directory.CreateDirectory(_dataDir);
 
-            if (!File.Exists(_productsFile))
-            {
-                File.WriteAllText(_productsFile, "Id;Name;Price;Description\n");
-            }
-
-            if (!File.Exists(_usersFile))
-            {
-                File.WriteAllText(_usersFile, "Id;Email;Salt;Hash\n");
-            }
+            EnsureFileHasHeader(_productsFile, "Id;Name;Price;Description");
+            EnsureFileHasHeader(_usersFile, "Id;Email;Salt;Hash");
 
             LoginMenu();
             MainMenu();
@@ -358,6 +351,14 @@ namespace lab
             Console.WriteLine($"Максимальна ціна: {max}");
             Console.WriteLine($"Середня ціна: {avg:F2}");
             Console.WriteLine($"Сума: {sum}");
+        }
+
+        private static void EnsureFileHasHeader(string path, string header)
+        {
+            if (!File.Exists(path) || new FileInfo(path).Length == 0)
+            {
+                File.WriteAllText(path, header + "\n");
+            }
         }
 
         // Авторизація

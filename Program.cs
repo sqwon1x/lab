@@ -61,6 +61,14 @@ namespace lab
             return max + 1;
         }
 
+        private static void EnsureFileHasHeader(string path, string header)
+        {
+            if (!File.Exists(path) || new FileInfo(path).Length == 0)
+            {
+                File.WriteAllText(path, header + "\n");
+            }
+        }
+
         // Головне меню
         private static void MainMenu()
         {
@@ -353,14 +361,6 @@ namespace lab
             Console.WriteLine($"Сума: {sum}");
         }
 
-        private static void EnsureFileHasHeader(string path, string header)
-        {
-            if (!File.Exists(path) || new FileInfo(path).Length == 0)
-            {
-                File.WriteAllText(path, header + "\n");
-            }
-        }
-
         // Авторизація
         private static void LoginMenu()
         {
@@ -385,38 +385,66 @@ namespace lab
                     Console.WriteLine("До зустрічі!");
                     Environment.Exit(0);
                 }
-                else if (ch == "1" || ch == "2")
+
+                if (ch != "1" && ch != "2")
+                {
+                    PrintError("Невірний пункт меню!");
+                    continue;
+                }
+
+                string email;
+                while (true)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.Write("Email: ");
                     Console.ResetColor();
-                    string email = Console.ReadLine() ?? string.Empty;
 
+                    email = Console.ReadLine() ?? string.Empty;
+
+                    if (!email.Contains("@") || !email.Contains("."))
+                    {
+                        PrintError("Невірний email!");
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                string password;
+                while (true)
+                {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.Write("Пароль: ");
                     Console.ResetColor();
-                    string pass = Console.ReadLine() ?? string.Empty;
 
-                    if (ch == "1")
+                    password = Console.ReadLine() ?? string.Empty;
+
+                    if (string.IsNullOrWhiteSpace(password))
                     {
-                        if (Login(email, pass))
-                        {
-                            PrintSuccess("Успішний вхід!");
-                            return;
-                        }
-                        else
-                        {
-                            PrintError("Невірний email або пароль!");
-                        }
+                        PrintError("Пароль не може бути порожнім!");
                     }
-                    else if (ch == "2")
+                    else
                     {
-                        Register(email, pass);
+                        break;
+                    }
+                }
+
+                if (ch == "1")
+                {
+                    if (Login(email, password))
+                    {
+                        PrintSuccess("Успішний вхід!");
+                        return;
+                    }
+                    else
+                    {
+                        PrintError("Невірний email або пароль!");
                     }
                 }
                 else
                 {
-                    PrintError("Невірний пункт меню!");
+                    Register(email, password);
                 }
             }
         }
@@ -424,6 +452,12 @@ namespace lab
         // Реєстрація
         private static void Register(string email, string password)
         {
+            if (string.IsNullOrEmpty(password))
+            {
+                PrintError("Пароль не може бути порожнім!");
+                return;
+            }
+
             if (!email.Contains("@") || !email.Contains("."))
             {
                 PrintError("Email має містити @ та . !");
